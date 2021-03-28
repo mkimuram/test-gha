@@ -1,0 +1,23 @@
+# Usage: | `/pony` | `/pony` | Add a pony image to the issue or PR. |
+name: pony command
+on:
+  repository_dispatch:
+    types: [pony-command]
+jobs:
+  pony:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show a pony image
+        run: |
+          img=$(curl -s 'https://theponyapi.com/api/v1/pony/random' | jq '.pony.representations.small')
+          msg="<img src=${img} width=\"150\">"
+          if [ -n "${PR_NUM}" ];then
+            gh pr comment "${PR_NUM}" -R ${REPO} -b "${msg}"
+          else
+            gh issue comment "${ISSUE_NUM}" -R ${REPO} -b "${msg}"
+          fi
+        env:
+          REPO: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
+          PR_NUM: ${{ github.event.client_payload.pull_request.number }}
+          GITHUB_TOKEN: ${{secrets.PAT}}

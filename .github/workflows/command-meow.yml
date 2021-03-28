@@ -1,0 +1,23 @@
+# Usage: | `/meow` | `/meow` | Add a cat image to the issue or PR. |
+name: meow command
+on:
+  repository_dispatch:
+    types: [meow-command]
+jobs:
+  meow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show a cat image
+        run: |
+          img=$(curl -s 'https://api.thecatapi.com/v1/images/search?format=json' | jq '.[0].url')
+          msg="<img src=${img} width=\"150\">"
+          if [ -n "${PR_NUM}" ];then
+            gh pr comment "${PR_NUM}" -R ${REPO} -b "${msg}"
+          else
+            gh issue comment "${ISSUE_NUM}" -R ${REPO} -b "${msg}"
+          fi
+        env:
+          REPO: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
+          PR_NUM: ${{ github.event.client_payload.pull_request.number }}
+          GITHUB_TOKEN: ${{secrets.PAT}}

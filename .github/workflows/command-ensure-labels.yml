@@ -1,0 +1,41 @@
+name: ensure-labels command
+on:
+  repository_dispatch:
+    types: [ensure-labels-command]
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Ensure labels
+        run: |
+          file=".github/labels.json"
+          repo=${{ github.event.client_payload.github.payload.repository.full_name }}       
+          for t in $(jq -r ".type | keys | .[]" ${file});do    
+            v=$(jq -r ".type[\"${t}\"][]" ${file}) 
+            for name in $(jq -r ".name" <<< ${v} );do
+              color=$(jq -r ". | select(.name == \"${name}\") | .color" <<< ${v} )
+              desc=$(jq -r ". | select(.name == \"${name}\") | .description" <<< ${v} )
+              # Create data to send
+              data="{"
+              if [ -n "${t}" ];then
+                data="${data}\"name\":\"${t}/${name}\""
+              else
+                data="${data}\"name\":\"${name}\""  
+              fi
+              if [ -n "${color}" ];then
+                data="${data}, \"color\":\"${color}\""  
+              fi
+              if [ -n "${desc}" ];then
+                data="${data}, \"description\":\"${desc}\""  
+              fi
+              data="${data}}"
+              # Send data
+              curl \
+                    -X POST \
+                    -H "Accept: application/vnd.github.v3+json"  \
+                    -H "Authorization: token ${{ secrets.PAT }}" \
+                    https://api.github.com/repos/${repo}/labels  \
+                    -d "${data}"
+            done
+          done

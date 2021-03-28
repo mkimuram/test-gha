@@ -1,0 +1,93 @@
+{
+	"type": {
+		"kind": [
+			{
+				"name": "bug",
+				"color": "D73A4A",
+				"description": "Categorizes issue or PR as related to a bug."
+			},
+			{
+				"name": "feature",
+				"color": "A2EEEF",
+				"description": "Categorizes issue or PR as related to a new feature."
+			},
+			{
+				"name": "documentation",
+				"color": "A2EEEF",
+				"description": "Categorizes issue or PR as related to documentation."
+			}
+		],
+		"priority": [
+			{
+				"name": "awaiting-more-evidence",
+				"color": "FEF2C0",
+				"description": "Lowest priority. Possibly useful, but not yet enough support to actually get it done."
+			},
+			{
+				"name": "backlog",
+				"color": "FBCA04",
+				"description": "Higher priority than priority/awaiting-more-evidence."
+			},
+			{
+				"name": "critical-urgent",
+				"color": "B60205",
+				"description": "Highest priority. Must be actively worked on as someone's top priority right now."
+			},
+			{
+				"name": "important-longterm",
+				"color": "E99695",
+				"description": "Important over the long term, but may not be staffed and/or may need multiple releases to complete."
+			},
+			{
+				"name": "important-soon",
+				"color": "E99695",
+				"description": "Must be staffed and worked on either currently, or very soon, ideally in time for the next release."
+			}
+		],
+		"lifecycle": [
+			{
+				"name": "active",
+				"color": "C2E0C6",
+				"description": "Indicates that an issue or PR is actively being worked on by a contributor."
+			},
+			{
+				"name": "frozen",
+				"color": "BFD4F2",
+				"description": "Indicates that an issue or PR should not be auto-closed due to staleness."
+			},
+			{
+				"name": "rotten",
+				"color": "87401D",
+				"description": "Denotes an issue or PR that has aged beyond stale and will be auto-closed."
+			},
+			{
+				"name": "stale",
+				"color": "87401D",
+				"description": "Denotes an issue or PR has remained open with no activity and has become stale."
+			}
+		],
+		"sig": [
+		],
+		"area": [
+		],
+		"wg": [
+		],
+		"": [
+			{
+				"name": "lgtm",
+				"color": "0E8A16",
+				"description": "Indicates that a PR is ready to be merged."
+			},
+			{
+				"name": "approved",
+				"color": "0E8A16",
+				"description": "Indicates a PR has been approved by an approver."
+			},
+			{
+				"name": "ok-to-test",
+				"color": "0E8A16",
+				"description": "Indicates a non-member PR verified by an org member that is safe to test."
+			}
+		]
+	}
+}

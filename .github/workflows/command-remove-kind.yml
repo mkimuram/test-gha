@@ -1,0 +1,22 @@
+# Usage: | `/remove-kind` | `/remove-kind bug` | Removes a kind label. |
+name: remove kind command
+on:
+  repository_dispatch:
+    types: [remove-kind-command]
+jobs:
+  remove-kind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove kind label from issue or pr
+        run: |
+          # args should not be empty
+          [ -n "${ARGS}" ] || false
+          # args should only contain one value
+          [[ "${ARGS}" != *" "* ]] || false
+          label="kind/${ARGS}"
+          gh api repos/${REPO}/issues/${ISSUE_NUM}/labels/${label} -X DELETE
+        env:
+          REPO: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
+          ARGS: ${{ github.event.client_payload.slash_command.args.unnamed.all }}
+          GITHUB_TOKEN: ${{secrets.PAT}}
