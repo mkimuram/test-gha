@@ -1,0 +1,33 @@
+name: 'Meow'
+description: 'Show a cat image'
+inputs:
+  repo:
+    description: 'Repository name to show the image'
+    required: true
+  issue_num:
+    description: 'Issue number to show the image'
+    required: true
+  pr_num:
+    description: 'Pr number to show the image'
+    required: false
+  token:
+    description: 'GITHUB_TOKEN to run this action'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Show a cat image
+      shell: bash
+      run: |
+        img=$(curl -s 'https://api.thecatapi.com/v1/images/search?format=json' | jq '.[0].url')
+        msg="<img src=${img} width=\"150\">"
+        if [ -n "${PR_NUM}" ];then
+          gh pr comment "${PR_NUM}" -R ${REPO} -b "${msg}"
+        else
+          gh issue comment "${ISSUE_NUM}" -R ${REPO} -b "${msg}"
+        fi
+      env:
+        REPO: ${{ inputs.repo }}
+        ISSUE_NUM: ${{ inputs.issue_num }}
+        PR_NUM: ${{ inputs.pr_num }}
+        GITHUB_TOKEN: ${{ inputs.token }}
