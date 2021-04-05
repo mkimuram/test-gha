@@ -12,14 +12,15 @@ jobs:
           token: ${{ secrets.PAT }}
           commands: |
             usage
-            hooray
-            ensure-labels
             close
             reopen
             assign
             unassign
             kind
             remove-kind
+            retest
             meow
             woof
             pony
+            hooray
+            ensure-labels
