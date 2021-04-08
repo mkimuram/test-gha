@@ -1,0 +1,33 @@
+name: 'Retest'
+description: 'Retest tests in pr'
+inputs:
+  repo:
+    description: 'Repository name to retest'
+    required: true
+  sha:
+    description: 'sha of the pr commit'
+    required: true
+  token:
+    description: 'GITHUB_TOKEN to run this action'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Retest jobs
+      shell: bash
+      run: |
+        # TODO: make workflow_id auto detect and allow multiple ones
+        workflow_id="test.yml"
+        if [ -n "${SHA}" ];then
+          run_id=$(gh api repos/${REPO}/actions/workflows/${workflow_id}/runs | \
+            jq '.workflow_runs[] | select(.head_sha=="'${SHA}'") | .id')
+          echo ${run_id}
+          if [ -n "${run_id}" ];then
+            # TODO: rerun only for failed jobs
+            gh api repos/${REPO}/actions/runs/${run_id}/rerun -X POST
+          fi
+        fi
+      env:
+        REPO: ${{ inputs.repo }}
+        SHA: ${{ inputs.sha }}
+        GITHUB_TOKEN: ${{ inputs.token }}

@@ -1,0 +1,31 @@
+name: 'Reopen'
+description: 'Reopen issue or pr'
+inputs:
+  repo:
+    description: 'Repository name to reopen'
+    required: true
+  issue_num:
+    description: 'Issue number to reopen'
+    required: true
+  pr_num:
+    description: 'PR number to reopen'
+    required: false
+  token:
+    description: 'GITHUB_TOKEN to run this action'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Reopen issue or pr
+      shell: bash
+      run: |
+        if [ -n "${PR_NUM}" ];then
+          gh pr reopen "${PR_NUM}" -R "${REPO}"
+        else
+          gh issue reopen "${ISSUE_NUM}" -R "${REPO}"
+        fi
+      env:
+        REPO: ${{ inputs.repo }}
+        ISSUE_NUM: ${{ inputs.issue_num }}
+        PR_NUM: ${{ inputs.pr_num }}
+        GITHUB_TOKEN: ${{ inputs.token }}

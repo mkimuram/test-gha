@@ -1,0 +1,32 @@
+name: 'Kind'
+description: 'Remove kind label from issue or pr'
+inputs:
+  repo:
+    description: 'Repository name to remove kind label'
+    required: true
+  issue_num:
+    description: 'Issue number to remove kind label'
+    required: true
+  args:
+    description: 'Arguments for slash command'
+    required: true
+  token:
+    description: 'GITHUB_TOKEN to run this action'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Remove kind label from issue or pr
+      shell: bash
+      run: |
+        # args should not be empty
+        [ -n "${ARGS}" ] || false
+        # args should only contain one value
+        [[ "${ARGS}" != *" "* ]] || false
+        label="kind/${ARGS}"
+        gh api repos/${REPO}/issues/${ISSUE_NUM}/labels/${label} -X DELETE
+      env:
+        REPO: ${{ inputs.repo }}
+        ISSUE_NUM: ${{ inputs.issue_num }}
+        ARGS: ${{ inputs.args }}
+        GITHUB_TOKEN: ${{ inputs.token }}

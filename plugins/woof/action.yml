@@ -1,0 +1,43 @@
+name: 'Woof'
+description: 'Show a dog image'
+inputs:
+  repo:
+    description: 'Repository name to show the image'
+    required: true
+  issue_num:
+    description: 'Issue number to show the image'
+    required: true
+  pr_num:
+    description: 'Pr number to show the image'
+    required: false
+  token:
+    description: 'GITHUB_TOKEN to run this action'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Show a dog image
+      shell: bash
+      run: |
+        for i in $(seq 20);do
+          res=$(curl -s 'https://random.dog/woof.json?filter=mp4,webm')
+          size=$(echo ${res} | jq '.fileSizeBytes')
+          img=$(echo ${res} | jq '.url')
+          if [ "$size" -lt "$(( 1024 * 1024 ))" ];then  
+            echo "Image:$img is good size($size)"
+            break
+          else
+            echo "Image:$img too big($size)"
+          fi
+        done
+        msg="<img src=${img} width=\"150\">"
+        if [ -n "${PR_NUM}" ];then
+          gh pr comment "${PR_NUM}" -R ${REPO} -b "${msg}"
+        else
+          gh issue comment "${ISSUE_NUM}" -R ${REPO} -b "${msg}"
+        fi
+      env:
+        REPO: ${{ inputs.repo }}
+        ISSUE_NUM: ${{ inputs.issue_num }}
+        PR_NUM: ${{ inputs.pr_num }}
+        GITHUB_TOKEN: ${{ inputs.token }}

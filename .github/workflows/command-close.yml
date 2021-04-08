@@ -7,15 +7,9 @@ jobs:
   close:
     runs-on: ubuntu-latest
     steps:
-      - name: Close issue or pr
-        run: |
-          if [ -n "${PR_NUM}" ];then
-            gh pr close "${PR_NUM}" -R ${REPO}
-          else
-            gh issue close ${ISSUE_NUM} -R ${REPO}
-          fi
-        env:
-          REPO: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
-          PR_NUM: ${{ github.event.client_payload.pull_request.number }}
-          GITHUB_TOKEN: ${{secrets.PAT}}
+      - uses: mkimuram/test-gha/plugins/close@main
+        with:
+          repo: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue_num: ${{ github.event.client_payload.github.payload.issue.number }}
+          pr_num: ${{ github.event.client_payload.pull_request.number }}
+          token: ${{secrets.PAT}}

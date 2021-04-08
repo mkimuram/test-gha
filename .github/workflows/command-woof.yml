@@ -7,27 +7,9 @@ jobs:
   woof:
     runs-on: ubuntu-latest
     steps:
-      - name: Show a dog image
-        run: |
-          for i in $(seq 20);do
-            res=$(curl -s 'https://random.dog/woof.json?filter=mp4,webm')
-            size=$(echo ${res} | jq '.fileSizeBytes')
-            img=$(echo ${res} | jq '.url')
-            if [ "$size" -lt "$(( 1024 * 1024 ))" ];then  
-              echo "Image:$img is good size($size)"
-              break
-            else
-              echo "Image:$img too big($size)"
-            fi
-          done
-          msg="<img src=${img} width=\"150\">"
-          if [ -n "${PR_NUM}" ];then
-            gh pr comment "${PR_NUM}" -R ${REPO} -b "${msg}"
-          else
-            gh issue comment "${ISSUE_NUM}" -R ${REPO} -b "${msg}"
-          fi
-        env:
-          REPO: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
-          PR_NUM: ${{ github.event.client_payload.pull_request.number }}
-          GITHUB_TOKEN: ${{secrets.PAT}}
+      - uses: mkimuram/test-gha/plugins/woof@main
+        with:
+          repo: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue_num: ${{ github.event.client_payload.github.payload.issue.number }}
+          pr_num: ${{ github.event.client_payload.pull_request.number }}
+          token: ${{secrets.PAT}}

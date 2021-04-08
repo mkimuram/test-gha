@@ -1,0 +1,31 @@
+name: 'Close'
+description: 'Close issue or pr'
+inputs:
+  repo:
+    description: 'Repository name to close'
+    required: true
+  issue_num:
+    description: 'Issue number to close'
+    required: true
+  pr_num:
+    description: 'PR number to close'
+    required: false
+  token:
+    description: 'GITHUB_TOKEN to run this action'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Close issue or pr
+      shell: bash
+      run: |
+        if [ -n "${PR_NUM}" ];then
+          gh pr close "${PR_NUM}" -R "${REPO}"
+        else
+          gh issue close "${ISSUE_NUM}" -R "${REPO}"
+        fi
+      env:
+        REPO: ${{ inputs.repo }}
+        ISSUE_NUM: ${{ inputs.issue_num }}
+        PR_NUM: ${{ inputs.pr_num }}
+        GITHUB_TOKEN: ${{ inputs.token }}

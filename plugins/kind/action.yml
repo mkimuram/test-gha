@@ -1,0 +1,33 @@
+name: 'Kind'
+description: 'Add kind label to issue or pr'
+inputs:
+  repo:
+    description: 'Repository name to add kind label'
+    required: true
+  issue_num:
+    description: 'Issue number to add kind label'
+    required: true
+  args:
+    description: 'Arguments for slash command'
+    required: true
+  token:
+    description: 'GITHUB_TOKEN to run this action'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Add kind label to issue or pr
+      shell: bash
+      run: |
+        # args should not be empty
+        [ -n "${ARGS}" ] || false
+        # args should only contain one value
+        [[ "${ARGS}" != *" "* ]] || false
+        label="kind/${ARGS}"
+        echo "{\"labels\":[\"${label}\"]}" | \
+              gh api repos/${REPO}/issues/${ISSUE_NUM}/labels -X POST --input -
+      env:
+        REPO: ${{ inputs.repo }}
+        ISSUE_NUM: ${{ inputs.issue_num }}
+        ARGS: ${{ inputs.args }}
+        GITHUB_TOKEN: ${{ inputs.token }}

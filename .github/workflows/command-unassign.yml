@@ -1,4 +1,4 @@
-# Usage: | `/unassgin` | `/unassign`<br> `/unassign spongebob patrick` | Unassigns assignee(s) from the PR. |
+# Usage: | `/unassign` | `/unassign`<br> `/unassign spongebob patrick` | Unassigns assignee(s) from the PR. |
 name: unassign command
 on:
   repository_dispatch:
@@ -7,25 +7,10 @@ jobs:
   unassign:
     runs-on: ubuntu-latest
     steps:
-      - name: Unassign from issue or pr
-        run: |
-          if [ -n "${ARGS}" ];then
-            i=0
-            for person in ${ARGS};do
-              if [ $i -ne 0 ];then
-                people="${people}, "
-              fi
-              people="${people}\"${person}\""
-              i=`expr $i + 1`
-            done
-          else
-            people="\"${{ github.actor }}\""
-          fi
-
-          echo "{\"assignees\":[${people}]}" | \
-                gh api repos/${REPO}/issues/${ISSUE_NUM}/assignees -X DELETE --input -
-        env:
-          REPO: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
-          ARGS: ${{ github.event.client_payload.slash_command.args.unnamed.all }}
-          GITHUB_TOKEN: ${{secrets.PAT}}
+      - uses: mkimuram/test-gha/plugins/unassign@main
+        with:
+          repo: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue_num: ${{ github.event.client_payload.github.payload.issue.number }}
+          args: ${{ github.event.client_payload.slash_command.args.unnamed.all }}
+          actor: ${{ github.actor }}
+          token: ${{secrets.PAT}}
