@@ -1,0 +1,1 @@
+| `/unassign` | `/unassign`<br> `/unassign spongebob patrick` | Unassigns assignee(s) from the PR. |

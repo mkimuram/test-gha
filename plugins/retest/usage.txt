@@ -1,0 +1,1 @@
+| `/retest` | `/retest` | Rerun test jobs that have failed. |

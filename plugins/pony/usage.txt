@@ -1,0 +1,1 @@
+| `/pony` | `/pony` | Add a pony image to the issue or PR. |

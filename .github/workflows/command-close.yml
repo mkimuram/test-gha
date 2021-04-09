@@ -1,4 +1,3 @@
-# Usage: | `/close` | `/close` | Closes an issue or PR. |
 name: close command
 on:
   repository_dispatch:
@@ -8,8 +7,3 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: mkimuram/test-gha/plugins/close@main
-        with:
-          repo: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue_num: ${{ github.event.client_payload.github.payload.issue.number }}
-          pr_num: ${{ github.event.client_payload.pull_request.number }}
-          token: ${{secrets.PAT}}

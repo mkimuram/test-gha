@@ -1,21 +1,5 @@
 name: 'Unassign'
 description: 'Unassign from issue or pr'
-inputs:
-  repo:
-    description: 'Repository name to unassign'
-    required: true
-  issue_num:
-    description: 'Issue number to unassign'
-    required: true
-  args:
-    description: 'Arguments for slash command'
-    required: false
-  actor:
-    description: 'Github actor'
-    required: false
-  token:
-    description: 'GITHUB_TOKEN to run this action'
-    required: true
 runs:
   using: "composite"
   steps:
@@ -38,8 +22,8 @@ runs:
         echo "{\"assignees\":[${people}]}" | \
               gh api repos/${REPO}/issues/${ISSUE_NUM}/assignees -X DELETE --input -
       env:
-        REPO: ${{ inputs.repo }}
-        ISSUE_NUM: ${{ inputs.issue_num }}
-        ARGS: ${{ inputs.args }}
-        ACTOR: ${{ inputs.actor }}
-        GITHUB_TOKEN: ${{ inputs.token }}
+        REPO: ${{ github.repository }}
+        ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
+        ARGS: ${{ github.event.client_payload.slash_command.args.unnamed.all }}
+        ACTOR: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ github.token }}

@@ -1,0 +1,1 @@
+| `/woof` | `/woof` | Add a dog image to the issue or PR. |

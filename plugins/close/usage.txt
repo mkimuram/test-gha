@@ -1,0 +1,1 @@
+| `/close` | `/close` | Closes an issue or PR. |

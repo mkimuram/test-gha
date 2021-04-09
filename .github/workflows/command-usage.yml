@@ -1,4 +1,3 @@
-# Usage: | `/usage` | `/usage` | Show usage message. |
 name: usage command
 on:
   repository_dispatch:
@@ -7,43 +6,4 @@ jobs:
   usage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install yq
-        run: |
-          sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64
-          sudo chmod a+x /usr/local/bin/yq
-      - name: Update gh
-        run: |
-          # Current gh in ubuntu-latest doesn't support -F option
-          sudo wget -O gh_1.8.1_linux_amd64.tar.gz https://github.com/cli/cli/releases/download/v1.8.1/gh_1.8.1_linux_amd64.tar.gz
-          sudo tar xvfz gh_1.8.1_linux_amd64.tar.gz
-          sudo cp gh_1.8.1_linux_amd64/bin/gh /usr/local/bin/gh
-          sudo chmod a+x /usr/local/bin/gh
-      - name: Show usage
-        run: |
-          wdir=".github/workflows/"
-          dfile="slash-command-dispatch.yml"
-          dpath="${wdir}${dfile}"
-          query='.jobs.slashCommandDispatch.steps[0].with.commands'
-
-          function usage_msg() {
-            echo '| Command | Example | Description |'
-            echo '| --- | --- | --- |'
-            while read cmd;do
-              cpath="${wdir}command-${cmd}.yml"
-              if [ -e "${cpath}" ];then
-                grep '^# Usage: ' "${cpath}" | sed 's/# Usage: //'
-              fi
-            done <<< $(yq eval "${query}" "${dpath}" | sed '/^$/d')
-          }
-
-          if [ -n "${PR_NUM}" ];then
-            usage_msg | /usr/local/bin/gh pr comment "${PR_NUM}" -R ${REPO} -F -
-          else
-            usage_msg | /usr/local/bin/gh issue comment "${ISSUE_NUM}" -R ${REPO} -F -
-          fi
-        env:
-          REPO: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
-          PR_NUM: ${{ github.event.client_payload.pull_request.number }}
-          GITHUB_TOKEN: ${{secrets.PAT}}
+      - uses: mkimuram/test-gha/plugins/usage@main

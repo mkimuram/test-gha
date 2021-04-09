@@ -1,4 +1,3 @@
-# Usage: | `/unassign` | `/unassign`<br> `/unassign spongebob patrick` | Unassigns assignee(s) from the PR. |
 name: unassign command
 on:
   repository_dispatch:
@@ -8,9 +7,3 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: mkimuram/test-gha/plugins/unassign@main
-        with:
-          repo: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue_num: ${{ github.event.client_payload.github.payload.issue.number }}
-          args: ${{ github.event.client_payload.slash_command.args.unnamed.all }}
-          actor: ${{ github.actor }}
-          token: ${{secrets.PAT}}

@@ -1,18 +1,5 @@
-name: 'Kind'
+name: 'Remove Kind'
 description: 'Remove kind label from issue or pr'
-inputs:
-  repo:
-    description: 'Repository name to remove kind label'
-    required: true
-  issue_num:
-    description: 'Issue number to remove kind label'
-    required: true
-  args:
-    description: 'Arguments for slash command'
-    required: true
-  token:
-    description: 'GITHUB_TOKEN to run this action'
-    required: true
 runs:
   using: "composite"
   steps:
@@ -26,7 +13,7 @@ runs:
         label="kind/${ARGS}"
         gh api repos/${REPO}/issues/${ISSUE_NUM}/labels/${label} -X DELETE
       env:
-        REPO: ${{ inputs.repo }}
-        ISSUE_NUM: ${{ inputs.issue_num }}
-        ARGS: ${{ inputs.args }}
-        GITHUB_TOKEN: ${{ inputs.token }}
+        REPO: ${{ github.repository }}
+        ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
+        ARGS: ${{ github.event.client_payload.slash_command.args.unnamed.all }}
+        GITHUB_TOKEN: ${{ github.token }}

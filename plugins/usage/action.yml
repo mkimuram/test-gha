@@ -1,0 +1,62 @@
+name: 'Usage'
+description: 'Show usage'
+runs:
+  using: "composite"
+  steps:
+    - name: Clone repo
+      shell: bash
+      run: |
+        # Using gh cli for nested action is not supported, yet.
+        gh repo clone ${REPO} . -- -q --depth 1 --single-branch
+      env:
+        REPO: ${{ github.repository }}
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Install yq
+      shell: bash
+      run: |
+        sudo wget -q -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64
+        sudo chmod a+x /usr/local/bin/yq
+    - name: Update gh
+      shell: bash
+      run: |
+        # Current gh in ubuntu-latest doesn't support -F option
+        sudo wget -q -O gh_1.8.1_linux_amd64.tar.gz https://github.com/cli/cli/releases/download/v1.8.1/gh_1.8.1_linux_amd64.tar.gz
+        sudo tar xfz gh_1.8.1_linux_amd64.tar.gz
+        sudo cp gh_1.8.1_linux_amd64/bin/gh /usr/local/bin/gh
+        sudo chmod a+x /usr/local/bin/gh
+    - name: Show usage
+      shell: bash
+      run: |
+        giturl="https://raw.githubusercontent.com"
+        wdir=".github/workflows/"
+        dfile="slash-command-dispatch.yml"
+        dpath="${wdir}${dfile}"
+        query='.jobs.slashCommandDispatch.steps[0].with.commands'
+
+        function usage_msg() {
+          echo '| Command | Example | Description |'
+          echo '| --- | --- | --- |'
+          while read cmd;do
+            cpath="${wdir}command-${cmd}.yml"
+            if [ -e "${cpath}" ];then
+              action=$(grep -- '- uses:' "${cpath}" | sed 's/^.*- uses://')
+              apath=$(echo ${action} | awk -F@ '{print $1}')
+              tag=$(echo ${action} | awk -F@ '{print $2}')
+              owner=$(echo ${apath} | awk -F/ '{print $1}')
+              repo=$(echo ${apath} | awk -F/ '{print $2}')
+              ppath=$(echo ${apath} | sed 's|'"${owner}/${repo}/"'||')
+              curl -sL "${giturl}/${owner}/${repo}/${tag}/${ppath}/usage.txt" | grep "^|" || true
+            fi
+          done <<< $(yq eval "${query}" "${dpath}" | sed '/^$/d')
+        }
+
+        if [ -n "${PR_NUM}" ];then
+          usage_msg | /usr/local/bin/gh pr comment "${PR_NUM}" -R ${REPO} -F -
+        else
+          usage_msg | /usr/local/bin/gh issue comment "${ISSUE_NUM}" -R ${REPO} -F -
+        fi
+      env:
+        REPO: ${{ github.repository }}
+        ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
+        PR_NUM: ${{ github.event.client_payload.pull_request.number }}
+        GITHUB_TOKEN: ${{ github.token }}

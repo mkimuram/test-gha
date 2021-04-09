@@ -1,15 +1,5 @@
 name: 'Retest'
 description: 'Retest tests in pr'
-inputs:
-  repo:
-    description: 'Repository name to retest'
-    required: true
-  sha:
-    description: 'sha of the pr commit'
-    required: true
-  token:
-    description: 'GITHUB_TOKEN to run this action'
-    required: true
 runs:
   using: "composite"
   steps:
@@ -28,6 +18,6 @@ runs:
           fi
         fi
       env:
-        REPO: ${{ inputs.repo }}
-        SHA: ${{ inputs.sha }}
-        GITHUB_TOKEN: ${{ inputs.token }}
+        REPO: ${{ github.repository }}
+        SHA: ${{ github.event.client_payload.pull_request.head.sha }}
+        GITHUB_TOKEN: ${{ github.token }}

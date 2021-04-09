@@ -1,4 +1,3 @@
-# Usage: | `/remove-kind` | `/remove-kind bug` | Removes a kind label. |
 name: remove kind command
 on:
   repository_dispatch:
@@ -8,8 +7,3 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: mkimuram/test-gha/plugins/remove-kind@main
-        with:
-          repo: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue_num: ${{ github.event.client_payload.github.payload.issue.number }}
-          args: ${{ github.event.client_payload.slash_command.args.unnamed.all }}
-          token: ${{secrets.PAT}}
