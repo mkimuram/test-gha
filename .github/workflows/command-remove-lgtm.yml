@@ -1,0 +1,9 @@
+name: remove-lgtm command
+on:
+  repository_dispatch:
+    types: [remove-lgtm-command]
+jobs:
+  remove-lgtm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mkimuram/test-gha/plugins/remove-lgtm@main

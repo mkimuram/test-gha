@@ -1,0 +1,1 @@
+| `/remove-approve` | `/remove-approve ` | Removes the 'approved' label which is typically used to gate merging. |

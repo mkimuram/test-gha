@@ -1,0 +1,9 @@
+name: lgtm command
+on:
+  repository_dispatch:
+    types: [lgtm-command]
+jobs:
+  lgtm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mkimuram/test-gha/plugins/lgtm@main

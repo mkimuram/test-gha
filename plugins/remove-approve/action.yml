@@ -1,0 +1,22 @@
+name: 'Remove approve'
+description: 'Remove approved label from pr'
+runs:
+  using: "composite"
+  steps:
+    - name: Remove approved label from pr
+      shell: bash
+      run: |
+        label="approved"
+        # remove-approve is only for pr
+        [ -n "${PR_NUM}" ] || false
+        # TODO: Check if actor has right to remove-approve
+        # If no args remove approved label
+        if [ -z "${ARGS}" ];then
+          gh api repos/${REPO}/issues/${ISSUE_NUM}/labels/${label} -X DELETE
+        fi
+      env:
+        REPO: ${{ github.repository }}
+        ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
+        PR_NUM: ${{ github.event.client_payload.pull_request.number }}
+        ARGS: ${{ github.event.client_payload.slash_command.args.unnamed.all }}
+        GITHUB_TOKEN: ${{ github.token }}

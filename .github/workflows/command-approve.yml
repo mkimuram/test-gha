@@ -1,0 +1,9 @@
+name: approve command
+on:
+  repository_dispatch:
+    types: [approve-command]
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mkimuram/test-gha/plugins/approve@main

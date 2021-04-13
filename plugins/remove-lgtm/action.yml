@@ -1,0 +1,22 @@
+name: 'Remove lgtm'
+description: 'Remove lgtm label from pr'
+runs:
+  using: "composite"
+  steps:
+    - name: Remove lgtm label from pr
+      shell: bash
+      run: |
+        label="lgtm"
+        # remove-lgtm is only for pr
+        [ -n "${PR_NUM}" ] || false
+        # TODO: Check if actor has right to remove-lgtm
+        # If no args remove lgtm label
+        if [ -z "${ARGS}" ];then
+          gh api repos/${REPO}/issues/${ISSUE_NUM}/labels/${label} -X DELETE
+        fi
+      env:
+        REPO: ${{ github.repository }}
+        ISSUE_NUM: ${{ github.event.client_payload.github.payload.issue.number }}
+        PR_NUM: ${{ github.event.client_payload.pull_request.number }}
+        ARGS: ${{ github.event.client_payload.slash_command.args.unnamed.all }}
+        GITHUB_TOKEN: ${{ github.token }}

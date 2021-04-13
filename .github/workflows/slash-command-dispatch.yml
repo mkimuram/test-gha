@@ -18,6 +18,10 @@ jobs:
             unassign
             kind
             remove-kind
+            lgtm
+            remove-lgtm
+            approve
+            remove-approve
             retest
             meow
             woof

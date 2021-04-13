@@ -1,0 +1,9 @@
+name: remove-approve command
+on:
+  repository_dispatch:
+    types: [remove-approve-command]
+jobs:
+  remove-approve:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mkimuram/test-gha/plugins/remove-approve@main
